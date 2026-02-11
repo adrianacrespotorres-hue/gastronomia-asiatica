@@ -17,7 +17,7 @@ export const generatePresentation = async (): Promise<SlideContent[]> => {
             type: Type.ARRAY,
             items: { type: Type.STRING }
         },
-        imageKeyword: { type: Type.STRING, description: "A single english keyword for finding a relevant image (e.g. 'sushi', 'rice', 'spices')" },
+        imageKeyword: { type: Type.STRING, description: "Detailed English keyword for historical Asian food/culture imagery" },
         layout: { 
             type: Type.STRING, 
             enum: [
@@ -36,8 +36,7 @@ export const generatePresentation = async (): Promise<SlideContent[]> => {
                     name: { type: Type.STRING },
                     value: { type: Type.INTEGER }
                 }
-            },
-            description: "Only required if layout is CHART. Provide 4-5 data points."
+            }
         },
         chartLabel: { type: Type.STRING }
       },
@@ -46,27 +45,22 @@ export const generatePresentation = async (): Promise<SlideContent[]> => {
   };
 
   const prompt = `
-    Actúa como un experto historiador de la cultura asiática y gastronomía.
-    Genera el contenido para una presentación de 10 diapositivas dirigida a estudiantes de gastronomía.
+    Eres un distinguido historiador de la cultura asiática y catedrático de gastronomía mundial.
+    Genera una presentación magistral titulada "Ecos del Pasado: La Odisea de la Cocina Asiática".
     
-    El tema es: "La cultura asiática: Tradiciones, Historia y Evolución en la Gastronomía".
-    
-    Requisitos:
-    1. Idioma: Español.
-    2. Tono: Profesional, académico, inspirador y didáctico.
-    3. Estructura:
-       - Slide 1: Título e Introducción.
-       - Slide 2: Fundamentos Filosóficos (Yin Yang, 5 Elementos en la comida).
-       - Slide 3: Ingredientes Históricos (Arroz, Soja, Té).
-       - Slide 4: La Ruta de las Especias y su influencia.
-       - Slide 5: Técnicas de Cocina Milenarias (Wok, Fermentación).
-       - Slide 6: Etiqueta y Tradiciones de Mesa.
-       - Slide 7: Evolución y Fusión Moderna.
-       - Slide 8: Gráfico estadístico (Layout: CHART). Ejemplo: Consumo de arroz vs trigo, o popularidad de platillos.
-       - Slide 9: Impacto Global y Diáspora.
-       - Slide 10: Conclusión.
-    
-    Asegúrate de que la diapositiva 8 tenga datos numéricos interesantes para un gráfico.
+    Contenido requerido (10 diapositivas):
+    1. Portada: Título evocador y subtítulo académico.
+    2. Filosofía del Sabor: El equilibrio del Tao y los cinco sabores elementales.
+    3. El Grano Sagrado: Historia social del arroz y su domesticación.
+    4. Alquimia de la Soja: Del grano a la salsa y el tofu (importancia histórica).
+    5. La Ruta de la Seda y Especias: Cómo el comercio transformó el paladar global.
+    6. Maestría del Fuego: Evolución técnica desde hornos antiguos hasta el wok.
+    7. Ceremonialismo: La etiqueta en la dinastía Tang o el período Edo.
+    8. Estadística de Influencia (CHART): Porcentaje de popularidad histórica de técnicas (Fermentación, Vapor, Fritura, Crudo).
+    9. Modernidad Crítica: Cómo la tradición sobrevive en la alta cocina contemporánea.
+    10. Legado Eterno: Reflexión final sobre la gastronomía como patrimonio inmaterial.
+
+    Lenguaje: Académico, rico en adjetivos históricos y poético. Español formal.
   `;
 
   try {
@@ -76,24 +70,22 @@ export const generatePresentation = async (): Promise<SlideContent[]> => {
       config: {
         responseMimeType: 'application/json',
         responseSchema: schema,
-        systemInstruction: "Eres un diseñador instruccional experto en gastronomía."
+        systemInstruction: "Eres un experto en curaduría de museos gastronómicos."
       }
     });
 
     const text = response.text;
-    if (!text) throw new Error("No content generated");
-    
+    if (!text) throw new Error("No text returned from API");
     return JSON.parse(text) as SlideContent[];
   } catch (error) {
-    console.error("Error generating presentation:", error);
-    // Fallback data in case of API failure (for robustness)
+    console.error("API Error:", error);
     return [
       {
         id: 1,
-        title: "Error de Generación",
-        body: "No se pudo conectar con el historiador virtual. Por favor intenta de nuevo.",
+        title: "Error de Conexión Histórica",
+        body: "Asegúrate de haber configurado la API_KEY en las variables de entorno de tu proyecto.",
         layout: SlideLayout.TitleOnly,
-        imageKeyword: "error"
+        imageKeyword: "history"
       }
     ];
   }
